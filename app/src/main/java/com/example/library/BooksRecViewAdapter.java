@@ -18,7 +18,10 @@ import androidx.transition.TransitionManager;
 
 import com.bumptech.glide.Glide;
 
+import static com.example.library.BookActivity.BOOK_ID_KEY;
 import java.util.ArrayList;
+
+
 
 public class BooksRecViewAdapter extends RecyclerView.Adapter<BooksRecViewAdapter.ViewHolder> {
     private static final String TAG = "BooksRecViewAdapter";
@@ -49,6 +52,7 @@ public class BooksRecViewAdapter extends RecyclerView.Adapter<BooksRecViewAdapte
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, BookActivity.class);
+                intent.putExtra(BOOK_ID_KEY, books.get(position).getId());
                 mContext.startActivity(intent);
             }
         });

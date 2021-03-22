@@ -24,13 +24,7 @@ public class AllBooksActivity extends AppCompatActivity {
         booksRecView.setAdapter(adapter);
         booksRecView.setLayoutManager(new LinearLayoutManager(this));
 
-        ArrayList<Book> books = new ArrayList<>();
-        books.add(new Book(1, "1Q84", "Haruku Murakami", 1350, "https://www.goldsborobooks.com/uploads/books/1q84-book-3/_bookCoverThumb/1Q84-3.jpg",
-                "A work of maddening brilliance", "Long Description"));
-        books.add(new Book(2,"To Kill a Mockingbird","Harper Lee",281,"https://images-na.ssl-images-amazon.com/images/I/81gepf1eMqL.jpg",
-                "Told through the eyes of a child, Harper Lee's magnum opus may seem to take a simplistic point of view, but Scout's world is rich and complex.",
-                "Long Description"));
-        adapter.setBooks(books);
+        adapter.setBooks(Utils.getInstance().getAllBooks());
 
     }
 }

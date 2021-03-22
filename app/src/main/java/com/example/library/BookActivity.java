@@ -2,15 +2,21 @@ package com.example.library;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
+import java.util.ArrayList;
+
 public class BookActivity extends AppCompatActivity {
 
+        public static final String BOOK_ID_KEY = "bookId";
     private TextView txtBookName, txtAuth, txtPages, txtDescription;
     private Button btnAddToWantToRead, btnAddToAlreadyRead, btnAddToCurrentlyReading, btnAddToFavourite;
     private ImageView bookImage;
@@ -20,7 +26,7 @@ public class BookActivity extends AppCompatActivity {
         setContentView(R.layout.activity_book);
         initViews();
 
-        String longDesc = "A young woman named Aomame follows a taxi driver’s enigmatic suggestion and begins to notice puzzling discrepancies in the world around her. She has entered, she realizes, a parallel existence, which she calls 1Q84 —“Q is for ‘question mark.’ A world that bears a question.” Meanwhile, an aspiring writer named Tengo takes on a suspect ghostwriting project. He becomes so wrapped up with the work and its unusual author that, soon, his previously placid life begins to come unraveled.\n" +
+ /*       String longDesc = "A young woman named Aomame follows a taxi driver’s enigmatic suggestion and begins to notice puzzling discrepancies in the world around her. She has entered, she realizes, a parallel existence, which she calls 1Q84 —“Q is for ‘question mark.’ A world that bears a question.” Meanwhile, an aspiring writer named Tengo takes on a suspect ghostwriting project. He becomes so wrapped up with the work and its unusual author that, soon, his previously placid life begins to come unraveled.\n" +
                 "\n" +
                 "As Aomame’s and Tengo’s narratives converge over the course of this single year, we learn of the profound and tangled connections that bind them ever closer: a beautiful, dyslexic teenage girl with a unique vision; a mysterious religious cult that instigated a shoot-out with the metropolitan police; a reclusive, wealthy dowager who runs a shelter for abused women; a hideously ugly private investigator; a mild-mannered yet ruthlessly efficient bodyguard; and a peculiarly insistent television-fee collector.\n" +
                 "\n" +
@@ -28,9 +34,137 @@ public class BookActivity extends AppCompatActivity {
 
         //TODO: Get data from recycler view
         Book book = new Book(1, "1Q84", "Haruku Murakami", 1350, "https://www.goldsborobooks.com/uploads/books/1q84-book-3/_bookCoverThumb/1Q84-3.jpg",
-                "A work of maddening brilliance", longDesc);
+                "A work of maddening brilliance", longDesc);*/
+        Intent intent = getIntent();
+        if(null != intent){
+            int bookId = intent.getIntExtra(BOOK_ID_KEY,-1);
+            if (bookId !=-1){
+                Book incomingBook = Utils.getInstance().getBookById(bookId);
+                if(null != incomingBook){
+                    setData(incomingBook);
 
-        setData(book);
+                    handleAlreadyRead(incomingBook);
+                    handleWantToReadBooks(incomingBook);
+                    handleCurrentlyReadingBooks(incomingBook);
+                    handleFavouriteBooks(incomingBook);
+                }
+            }
+        }
+
+    }
+    private void handleCurrentlyReadingBooks(final Book book){
+        ArrayList<Book> currentlyReading = Utils.getInstance().getCurrentlyReadingBooks();
+
+        boolean existinCurrentlyReading = false;
+        for(Book b: currentlyReading){
+            if(b.getId() == book.getId()){
+                existinCurrentlyReading = true;
+            }
+        }
+        if(existinCurrentlyReading){
+            btnAddToCurrentlyReading.setEnabled(false);
+        }else{
+            btnAddToCurrentlyReading.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (Utils.getInstance().addToCurrentlyReading(book)){
+                        Toast.makeText(BookActivity.this, "Book Added", Toast.LENGTH_SHORT).show();
+
+                        Intent intent = new Intent(BookActivity.this, CurrentlyReadingActivity.class);
+                        startActivity(intent);
+                    }else{
+                        Toast.makeText(BookActivity.this, "Something went wrong, try again", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
+    }
+
+    private void handleFavouriteBooks(final Book book){
+        ArrayList<Book> favoriteBooks = Utils.getInstance().getFavouriteBooks();
+
+        boolean existInFavoriteBooks = false;
+        for(Book b: favoriteBooks){
+            if(b.getId() == book.getId()){
+                existInFavoriteBooks = true;
+            }
+        }
+        if(existInFavoriteBooks){
+            btnAddToFavourite.setEnabled(false);
+        }else{
+            btnAddToFavourite.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (Utils.getInstance().addToFavorites(book)){
+                        Toast.makeText(BookActivity.this, "Book Added", Toast.LENGTH_SHORT).show();
+
+                        Intent intent = new Intent(BookActivity.this, FavoriteBookActivity.class);
+                        startActivity(intent);
+                    }else{
+                        Toast.makeText(BookActivity.this, "Something went wrong, try again", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
+    }
+    private  void handleWantToReadBooks(final Book book){
+        ArrayList<Book> wantToReadBooks = Utils.getInstance().getWantToReadBooks();
+
+        boolean existsInWantToReadBooks = false;
+        for(Book b: wantToReadBooks){
+            if(b.getId() == book.getId()){
+                existsInWantToReadBooks = true;
+            }
+        }
+        if(existsInWantToReadBooks){
+            btnAddToWantToRead.setEnabled(false);
+        }else{
+            btnAddToWantToRead.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (Utils.getInstance().addToWantToRead(book)){
+                        Toast.makeText(BookActivity.this, "Book Added", Toast.LENGTH_SHORT).show();
+
+                        Intent intent = new Intent(BookActivity.this, WantToReadActivity.class);
+                        startActivity(intent);
+                    }else{
+                        Toast.makeText(BookActivity.this, "Something went wrong, try again", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
+    }
+
+    /*
+    * Enable and disable btn
+    * Add the book to already read book ArrayList
+    * */
+    private void handleAlreadyRead(Book book){
+        ArrayList<Book> alreadyReadBooks = Utils.getInstance().getAlreadyReadBooks();
+
+        boolean existInAlreadyReadBooks = false;
+        for(Book b: alreadyReadBooks){
+            if(b.getId() == book.getId()){
+                existInAlreadyReadBooks = true;
+            }
+        }
+        if(existInAlreadyReadBooks){
+            btnAddToAlreadyRead.setEnabled(false);
+        }else{
+            btnAddToAlreadyRead.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (Utils.getInstance().addToAlreadyRead(book)){
+                        Toast.makeText(BookActivity.this, "Book Added", Toast.LENGTH_SHORT).show();
+
+                        Intent intent = new Intent(BookActivity.this, AlreadyReadBookActivity.class);
+                        startActivity(intent);
+                    }else{
+                        Toast.makeText(BookActivity.this, "Something went wrong, try again", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
     }
     private void setData(Book book){
         txtBookName.setText(book.getName());
