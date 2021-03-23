@@ -1,9 +1,17 @@
 package com.example.library;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 
 public class Utils {
+    private static final String ALL_BOOKS_KEY = "all_books";
+
     private static Utils instance;
+    private SharedPreferences sharedPreferences;
 
     private static ArrayList<Book> allBooks;
     private static ArrayList<Book> alreadyReadBooks;
@@ -11,7 +19,8 @@ public class Utils {
     private static ArrayList<Book> currentlyReadingBooks;
     private static ArrayList<Book> favouriteBooks;
 
-    private Utils() {
+    private Utils(Context context) {
+        sharedPreferences = context.getSharedPreferences("alternate_db",Context.MODE_PRIVATE);
         if(null == allBooks){
             allBooks = new ArrayList<>();
             initData();
@@ -35,18 +44,24 @@ public class Utils {
 
     private void initData() {
         //TODO: add initial data
-        allBooks.add(new Book(1, "1Q84", "Haruku Murakami", 1350, "https://www.goldsborobooks.com/uploads/books/1q84-book-3/_bookCoverThumb/1Q84-3.jpg",
+        ArrayList<Book> books = new ArrayList<>();
+        books.add(new Book(1, "1Q84", "Haruku Murakami", 1350, "https://www.goldsborobooks.com/uploads/books/1q84-book-3/_bookCoverThumb/1Q84-3.jpg",
                 "A work of maddening brilliance", "Long Description"));
-        allBooks.add(new Book(2,"To Kill a Mockingbird","Harper Lee",281,"https://images-na.ssl-images-amazon.com/images/I/81gepf1eMqL.jpg",
+        books.add(new Book(2,"To Kill a Mockingbird","Harper Lee",281,"https://images-na.ssl-images-amazon.com/images/I/81gepf1eMqL.jpg",
                 "Told through the eyes of a child, Harper Lee's magnum opus may seem to take a simplistic point of view, but Scout's world is rich and complex.",
                 "Long Description"));
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        editor.putString(ALL_BOOKS_KEY,gson.toJson(books));
+        editor.commit();
     }
 
-    public static Utils getInstance(){
+    public static Utils getInstance(Context context){
         if(null != instance){
             return instance;
         }else {
-            instance = new Utils();
+            instance = new Utils(context);
             return instance;
         }
     }

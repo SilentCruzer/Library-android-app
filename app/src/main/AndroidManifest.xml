@@ -12,12 +12,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Library">
         <activity android:name=".WebsiteActivity"></activity>
-        <activity android:name=".CurrentlyReadingActivity" />
-        <activity android:name=".FavoriteBookActivity" />
-        <activity android:name=".WantToReadActivity" />
-        <activity android:name=".AlreadyReadBookActivity" />
-        <activity android:name=".BookActivity" />
-        <activity android:name=".AllBooksActivity" />
+        <activity android:name=".CurrentlyReadingActivity"
+            android:label="@string/activity_currently_reading"/>
+        <activity android:name=".FavoriteBookActivity"
+            android:label="@string/activity_favourite_book"/>
+        <activity android:name=".WantToReadActivity"
+            android:label="@string/activity_want_to_read"/>
+        <activity android:name=".AlreadyReadBookActivity"
+            android:label="@string/activity_already_read_book"/>
+        <activity android:name=".BookActivity"
+            android:label="@string/activity_book"/>
+        <activity android:name=".AllBooksActivity"
+            android:label="@string/activity_all_books"/>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
