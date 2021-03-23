@@ -19,7 +19,7 @@ public class AllBooksActivity extends AppCompatActivity {
         setContentView(R.layout.activity_all_books);
 
         booksRecView = findViewById(R.id.booksRecView);
-        adapter = new BooksRecViewAdapter(this);
+        adapter = new BooksRecViewAdapter(this, "allBooks");
         booksRecView = findViewById(R.id.booksRecView);
         booksRecView.setAdapter(adapter);
         booksRecView.setLayoutManager(new LinearLayoutManager(this));
